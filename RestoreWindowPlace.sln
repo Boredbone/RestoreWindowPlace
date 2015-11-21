@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestoreWindowPlaceTest", "RestoreWindowPlaceTest\RestoreWindowPlaceTest.csproj", "{1CD0ADA1-ED7D-4941-BD61-27CF3E0BF76D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestoreWindowPlace", "RestoreWindowPlace\RestoreWindowPlace.csproj", "{477DBC9F-34A6-4FC7-8B20-1219669A33D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CD0ADA1-ED7D-4941-BD61-27CF3E0BF76D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CD0ADA1-ED7D-4941-BD61-27CF3E0BF76D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CD0ADA1-ED7D-4941-BD61-27CF3E0BF76D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CD0ADA1-ED7D-4941-BD61-27CF3E0BF76D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{477DBC9F-34A6-4FC7-8B20-1219669A33D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{477DBC9F-34A6-4FC7-8B20-1219669A33D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{477DBC9F-34A6-4FC7-8B20-1219669A33D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{477DBC9F-34A6-4FC7-8B20-1219669A33D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
