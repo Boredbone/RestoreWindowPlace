@@ -10,7 +10,7 @@ namespace RestoreWindowPlace
     /// </summary>
     public class RestoreWindowPlace
     {
-        private string configFileName;
+        //private string configFileName;
         private XmlSettingManager<Dictionary<string, Rectangle>> ConfigXml { get; }
         private Dictionary<string, Rectangle> WindowPlaces { get; set; }
 
@@ -18,14 +18,18 @@ namespace RestoreWindowPlace
         /// <summary>
         /// Windowの位置とサイズをファイルに保存
         /// </summary>
-        /// <param name="fileName">保存するxmlファイルの名前またはパス</param>
-        public RestoreWindowPlace(string fileName)
+        /// <param name="filePath">保存するxmlファイルの名前またはパス</param>
+        public RestoreWindowPlace(string filePath)
         {
-            this.configFileName = fileName;
+            //this.configFileName = filePath;
+
+            var directory = System.IO.Path.GetDirectoryName(filePath);
+            var fileName = System.IO.Path.GetFileName(filePath);
 
             this.WindowPlaces = new Dictionary<string, Rectangle>();
 
-            this.ConfigXml = new XmlSettingManager<Dictionary<string, Rectangle>>(this.configFileName);
+            this.ConfigXml = new XmlSettingManager<Dictionary<string, Rectangle>>
+                (fileName) { Directory = directory };
 
             this.Load();
         }

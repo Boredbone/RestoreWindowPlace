@@ -14,6 +14,10 @@ namespace RestoreWindowPlace
         static readonly string backUpNameHeader = "backup_";
         private string fileName;
 
+        public string Directory { get; set; }
+        private string BasePath
+            => (this.Directory == null || this.Directory.Length <= 0) ? "" : this.Directory + @"\";
+
         /// <summary>
         /// 保存するファイル名を指定してインスタンスを初期化
         /// </summary>
@@ -35,11 +39,10 @@ namespace RestoreWindowPlace
                 throw new ArgumentException();
             }
 
-
             try
             {
                 //ライターを生成
-                using (var xw = XmlWriter.Create(this.fileName,
+                using (var xw = XmlWriter.Create(this.BasePath + this.fileName,
                     new XmlWriterSettings
                     {
                         Indent = true,
@@ -79,20 +82,22 @@ namespace RestoreWindowPlace
         public LoadedObjectContainer<T> LoadXml(XmlLoadingOptions options)
         {
 
-
             Exception errorMessage = null;
 
             try
             {
                 //ファイルから読み込み
-                var loaded = this.LoadMain(this.fileName);
+
+                var loaded = this.LoadMain(this.BasePath + this.fileName);
+
 
                 //自動バックアップを使用する場合、正常に読み込めたファイルを別名でコピー
                 if (options.HasFlag(XmlLoadingOptions.UseBackup) || options.HasFlag(XmlLoadingOptions.DoBackup))
                 {
                     try
                     {
-                        File.Copy(this.fileName, backUpNameHeader + this.fileName, true);
+                        File.Copy(this.BasePath + this.fileName, 
+                            this.BasePath + backUpNameHeader + this.fileName, true);
                     }
                     catch (Exception e)
                     {
@@ -170,7 +175,9 @@ namespace RestoreWindowPlace
             try
             {
                 //バックアップファイルを読み込む
-                var loaded = this.LoadMain(backUpNameHeader + fileName);
+
+                var loaded = this.LoadMain(this.BasePath + backUpNameHeader + fileName);
+
 
                 return new LoadedObjectContainer<T>(loaded, errorMessage);
             }
@@ -206,10 +213,11 @@ namespace RestoreWindowPlace
                 }
             }
         }
-        
-        private T LoadMain(string name)
+
+
+        private T LoadMain(string path)
         {
-            using (var xr = XmlReader.Create(name))
+            using (var xr = XmlReader.Create(path))
             {
                 var serializer = new DataContractSerializer(typeof(T));
                 var value = serializer.ReadObject(xr);
@@ -217,6 +225,13 @@ namespace RestoreWindowPlace
                 return (T)value;
             }
         }
+
+
+        public void DeleteFile()
+        {
+            //TODO
+        }
+
 
 
     }

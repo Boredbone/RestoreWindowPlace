@@ -18,7 +18,7 @@ namespace RestoreWindowPlaceTest
         public App()
         {
             // Set a name of config file
-            this.WindowPlace = new RestoreWindowPlace.RestoreWindowPlace("placement.config");
+            this.WindowPlace = new RestoreWindowPlace.RestoreWindowPlace(@"placement.config");
         }
 
         protected override void OnExit(ExitEventArgs e)
