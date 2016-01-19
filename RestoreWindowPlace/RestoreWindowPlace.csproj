@@ -54,7 +54,7 @@
     <Compile Include="Rect.cs" />
     <Compile Include="WindowInformation.cs" />
     <Compile Include="WindowPlacement.cs" />
-    <Compile Include="RestoreWindowPlace.cs" />
+    <Compile Include="WindowPlace.cs" />
     <Compile Include="WindowRelocate.cs" />
     <Compile Include="XmlSettingManager.cs" />
   </ItemGroup>

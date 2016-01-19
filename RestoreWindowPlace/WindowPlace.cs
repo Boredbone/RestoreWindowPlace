@@ -8,7 +8,7 @@ namespace RestoreWindowPlace
     /// <summary>
     /// Windowの位置とサイズをファイルに保存
     /// </summary>
-    public class RestoreWindowPlace
+    public class WindowPlace
     {
         //private string configFileName;
         private XmlSettingManager<Dictionary<string, Rectangle>> ConfigXml { get; }
@@ -19,7 +19,7 @@ namespace RestoreWindowPlace
         /// Windowの位置とサイズをファイルに保存
         /// </summary>
         /// <param name="filePath">保存するxmlファイルの名前またはパス</param>
-        public RestoreWindowPlace(string filePath)
+        public WindowPlace(string filePath)
         {
             //this.configFileName = filePath;
 

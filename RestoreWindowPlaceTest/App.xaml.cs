@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using RestoreWindowPlace;
 
 namespace RestoreWindowPlaceTest
 {
@@ -13,12 +14,12 @@ namespace RestoreWindowPlaceTest
     /// </summary>
     public partial class App : Application
     {
-        public RestoreWindowPlace.RestoreWindowPlace WindowPlace { get; }
+        public WindowPlace WindowPlace { get; }
 
         public App()
         {
             // Set a name of config file
-            this.WindowPlace = new RestoreWindowPlace.RestoreWindowPlace(@"placement.config");
+            this.WindowPlace = new WindowPlace(@"placement.config");
         }
 
         protected override void OnExit(ExitEventArgs e)

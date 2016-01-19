@@ -1,21 +1,23 @@
 ﻿# RestoreWindowPlace
 ======================
 
-Save and restore the place of the WPF window  
+Save and restore the place of WPF windows  
   
   
 ## Example
   
 in App.xaml.cs
 ```cs
+using RestoreWindowPlace;
+
 public partial class App : Application
 {
-    public RestoreWindowPlace.RestoreWindowPlace WindowPlace { get; }
+    public WindowPlace WindowPlace { get; }
 
     public App()
     {
         // Set a name of config file
-        this.WindowPlace = new RestoreWindowPlace.RestoreWindowPlace("placement.config");
+        this.WindowPlace = new WindowPlace("placement.config");
     }
 
     protected override void OnExit(ExitEventArgs e)
