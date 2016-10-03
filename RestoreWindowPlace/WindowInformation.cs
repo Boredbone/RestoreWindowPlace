@@ -3,7 +3,7 @@
 namespace RestoreWindowPlace
 {
     /// <summary>
-    /// ウインドウの情報
+    /// Window information
     /// </summary>
     internal class WindowInformation
     {

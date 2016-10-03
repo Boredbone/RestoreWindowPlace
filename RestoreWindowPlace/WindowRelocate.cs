@@ -8,13 +8,13 @@ using System.Text;
 namespace RestoreWindowPlace
 {
     /// <summary>
-    /// WindowPlacementを使ってウインドウ操作
+    /// Operate window using WindowPlacement
     /// </summary>
     internal static class WindowRelocate
     {
 
         /// <summary>
-        /// 全ウインドウを列挙
+        /// Enumerate all windows
         /// </summary>
         /// <returns></returns>
         public static List<WindowInformation> EnumerateWindows()
@@ -59,7 +59,7 @@ namespace RestoreWindowPlace
         }
 
         /// <summary>
-        /// ウインドウを指定された位置と大きさに配置
+        /// Set position and size to window
         /// </summary>
         /// <param name="window"></param>
         /// <param name="positon"></param>
@@ -108,7 +108,7 @@ namespace RestoreWindowPlace
         }
 
         /// <summary>
-        /// ウインドウの大きさを変えずに指定された位置に配置
+        /// Set position to window
         /// </summary>
         /// <param name="window"></param>
         /// <param name="left"></param>
@@ -119,7 +119,7 @@ namespace RestoreWindowPlace
         }
 
         /// <summary>
-        /// 一番上にあるウインドウを指定された位置と大きさに配置
+        /// Set position and size to top window
         /// </summary>
         /// <param name="positon"></param>
         public static void RelocateTop(Rectangle positon)
@@ -165,7 +165,7 @@ namespace RestoreWindowPlace
         }
 
         /// <summary>
-        /// ウインドウの位置と大きさを取得
+        /// Get position and size of window
         /// </summary>
         /// <param name="window"></param>
         /// <returns></returns>
@@ -179,8 +179,11 @@ namespace RestoreWindowPlace
 
             var position = placement.NormalPosition;
 
-
-            return new Rectangle(position.Left, position.Top, position.Right - position.Left, position.Bottom - position.Top);
+            return new Rectangle(
+                position.Left,
+                position.Top,
+                position.Right - position.Left,
+                position.Bottom - position.Top);
         }
     }
 }

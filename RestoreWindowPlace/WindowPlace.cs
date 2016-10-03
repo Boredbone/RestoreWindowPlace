@@ -6,52 +6,37 @@ using System.Windows.Interop;
 namespace RestoreWindowPlace
 {
     /// <summary>
-    /// Windowの位置とサイズをファイルに保存
+    /// Save size and position of window to file
     /// </summary>
     public class WindowPlace
     {
-        //private string configFileName;
         private XmlSettingManager<Dictionary<string, Rectangle>> ConfigXml { get; }
         private Dictionary<string, Rectangle> WindowPlaces { get; set; }
 
 
         /// <summary>
-        /// Windowの位置とサイズをファイルに保存
+        /// Save size and position of window to file
         /// </summary>
-        /// <param name="filePath">保存するxmlファイルの名前またはパス</param>
+        /// <param name="filePath">Name or path of XML file to save</param>
         public WindowPlace(string filePath)
         {
-            //this.configFileName = filePath;
-
-            var directory = System.IO.Path.GetDirectoryName(filePath);
-            var fileName = System.IO.Path.GetFileName(filePath);
-
             this.WindowPlaces = new Dictionary<string, Rectangle>();
-
-            this.ConfigXml = new XmlSettingManager<Dictionary<string, Rectangle>>
-                (fileName) { Directory = directory };
-
+            this.ConfigXml = new XmlSettingManager<Dictionary<string, Rectangle>>(filePath);
             this.Load();
         }
 
         /// <summary>
-        /// 設定ファイルを保存
+        /// Save setting file
         /// </summary>
-        public void Save()
-        {
-            this.ConfigXml.SaveXml(this.WindowPlaces);
-        }
+        public void Save() => this.ConfigXml.SaveXml(this.WindowPlaces);
 
         /// <summary>
-        /// 設定ファイルを読み込み
+        /// Load setting file
         /// </summary>
-        public void Load()
-        {
-            this.WindowPlaces = this.ConfigXml.LoadXml(XmlLoadingOptions.IgnoreAllException).Value;
-        }
+        public void Load() => this.WindowPlaces = this.ConfigXml.LoadXml();
 
         /// <summary>
-        /// 位置とサイズを復元
+        /// Restore size and position
         /// </summary>
         /// <param name="window"></param>
         /// <param name="key"></param>
@@ -65,7 +50,7 @@ namespace RestoreWindowPlace
         }
 
         /// <summary>
-        /// サイズを変更せず、位置のみを復元
+        /// Restore only position
         /// </summary>
         /// <param name="window"></param>
         /// <param name="key"></param>
@@ -79,19 +64,19 @@ namespace RestoreWindowPlace
         }
 
         /// <summary>
-        /// 位置とサイズを保存
+        /// Store size and position
         /// </summary>
         /// <param name="window"></param>
         /// <param name="key"></param>
         public void Store(Window window, string key)
         {
-            var place = new WindowInformation(new WindowInteropHelper(window).Handle).GetPlace();
-            this.WindowPlaces[key] = place;
+            this.WindowPlaces[key] = new WindowInformation
+                (new WindowInteropHelper(window).Handle).GetPlace();
         }
 
 
         /// <summary>
-        /// Windowの位置とサイズを自動で保存・復元するイベントを登録
+        /// Register the event that store/restore size and position of Window automatically
         /// </summary>
         /// <param name="window"></param>
         /// <param name="windowId"></param>
