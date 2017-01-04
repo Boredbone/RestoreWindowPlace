@@ -9,6 +9,8 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <language>en-US</language>
         <description>$description$</description>
+        <licenseUrl>https://github.com/Boredbone/RestoreWindowPlace/blob/master/LICENSE.txt</licenseUrl>
+        <projectUrl>https://github.com/Boredbone/RestoreWindowPlace</projectUrl>
     </metadata>
     <files>
         <file src="bin\Release\RestoreWindowPlace.dll" target="lib\net45" />
