@@ -25,6 +25,8 @@ namespace RestoreWindowPlaceTest
         {
             InitializeComponent();
 
+            this.Closed += (o, e) => ((App)Application.Current).WindowPlace.Save();
+
             // Set a unique window key
             ((App)Application.Current).WindowPlace.Register(this, "MainWindow");
         }

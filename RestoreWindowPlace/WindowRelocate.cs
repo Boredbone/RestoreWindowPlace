@@ -62,7 +62,7 @@ namespace RestoreWindowPlace
         /// Set position and size to window
         /// </summary>
         /// <param name="window"></param>
-        /// <param name="positon"></param>
+        /// <param name="positon">Position and size. If width &lt; 0 maximized, if height &lt; 0 minimized.</param>
         public static void Relocate(this WindowInformation window, Rectangle positon)
         {
 
@@ -70,40 +70,50 @@ namespace RestoreWindowPlace
 
             placement.Length = Marshal.SizeOf(typeof(WindowPlacement.WINDOWPLACEMENT));
 
-
-
+            // Get current placement
             WindowPlacement.GetWindowPlacement(window.Handle, ref placement);
 
-            int width = placement.NormalPosition.Right - placement.NormalPosition.Left;
-            int height = placement.NormalPosition.Bottom - placement.NormalPosition.Top;
-
             placement.ShowCmd = WindowPlacement.ShowWindowCommands.Restore;
+            placement.Flags = 0;
             placement.NormalPosition.Top = positon.Top;
             placement.NormalPosition.Left = positon.Left;
 
-            if (positon.Top >= positon.Bottom || positon.Right <= positon.Left)
+            ////Restore if minimized
+            //if (placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized)
+            //{
+            //    placement.ShowCmd = WindowPlacement.ShowWindowCommands.Normal;
+            //}
+
+            var width = positon.Width;
+            var height = positon.Height;
+
+            if (width == 0 || height == 0)
             {
-                placement.NormalPosition.Bottom = placement.NormalPosition.Top + height;
-                placement.NormalPosition.Right = placement.NormalPosition.Left + width;
+                width = placement.NormalPosition.Right - placement.NormalPosition.Left;
+                height = placement.NormalPosition.Bottom - placement.NormalPosition.Top;
             }
-            else
+            else if (width < 0 && height < 0)
             {
-                placement.NormalPosition.Bottom = positon.Bottom;
-                placement.NormalPosition.Right = positon.Right;
+                width *= -1;
+                height *= -1;
+            }
+            else if (width < 0)
+            {
+                width *= -1;
+                placement.ShowCmd = WindowPlacement.ShowWindowCommands.Maximize;
+            }
+            else if (height < 0)
+            {
+                height *= -1;
+                placement.ShowCmd = WindowPlacement.ShowWindowCommands.ShowMinimized;
             }
 
-            placement.Flags = 0;
-
-            //最小化されていたら元に戻す
-            placement.ShowCmd =
-                (placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized)
-                ? WindowPlacement.ShowWindowCommands.Normal
-                : placement.ShowCmd;
-
+            placement.NormalPosition.Bottom = placement.NormalPosition.Top + height;
+            placement.NormalPosition.Right = placement.NormalPosition.Left + width;
 
             WindowPlacement.SetWindowPlacement(window.Handle, ref placement);
 
-            //最前面に表示
+            // Show at top
             WindowPlacement.SetForegroundWindow(window.Handle);
         }
 
@@ -115,7 +125,7 @@ namespace RestoreWindowPlace
         /// <param name="top"></param>
         public static void Relocate(this WindowInformation window, int left, int top)
         {
-            window.Relocate(new Rectangle(left, top, -1, -1));
+            window.Relocate(new Rectangle(left, top, 0, 0));
         }
 
         /// <summary>
@@ -179,11 +189,14 @@ namespace RestoreWindowPlace
 
             var position = placement.NormalPosition;
 
+            var minimized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized;
+            var maximized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.Maximize;
+
             return new Rectangle(
                 position.Left,
                 position.Top,
-                position.Right - position.Left,
-                position.Bottom - position.Top);
+                (maximized ? -1 : 1) * (position.Right - position.Left),
+                (position.Bottom - position.Top));
         }
     }
 }
