@@ -77,9 +77,10 @@ namespace RestoreWindowPlace
 
         /// <summary>
         /// Register the event that store/restore size and position of Window automatically
+        /// using unique ID
         /// </summary>
-        /// <param name="window"></param>
-        /// <param name="windowId"></param>
+        /// <param name="window">target window</param>
+        /// <param name="windowId">Unique ID associated with the window</param>
         public void Register(Window window, string windowId)
         {
             window.SourceInitialized += (o, e) => this.Restore(window, windowId);
@@ -90,6 +91,16 @@ namespace RestoreWindowPlace
                     this.Store(window, windowId);
                 }
             };
+        }
+
+        /// <summary>
+        /// Register the event that store/restore size and position of Window automatically
+        /// using the name of the type extends Window class
+        /// </summary>
+        /// <param name="window">target window</param>
+        public void Register<T>(T window) where T : Window
+        {
+            Register(window, typeof(T).Name);
         }
     }
 }

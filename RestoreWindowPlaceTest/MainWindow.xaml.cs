@@ -25,10 +25,14 @@ namespace RestoreWindowPlaceTest
         {
             InitializeComponent();
 
+            // Save setting when this window close
             this.Closed += (o, e) => ((App)Application.Current).WindowPlace.Save();
 
-            // Set a unique window key
-            ((App)Application.Current).WindowPlace.Register(this, "MainWindow");
+            // Resister the window using type name as key
+            ((App)Application.Current).WindowPlace.Register(this);
+
+            // Or you can register the window with any unique key
+            //((App)Application.Current).WindowPlace.Register(this, "MainWindow");
         }
     }
 }

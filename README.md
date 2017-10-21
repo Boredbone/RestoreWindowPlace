@@ -1,5 +1,5 @@
 ﻿# RestoreWindowPlace
-======================
+
 
 Save and restore the place of WPF windows  
   
@@ -29,6 +29,22 @@ public partial class App : Application
 ```
   
   
+in MainWindow.xaml.cs
+```cs
+public partial class MainWindow : Window
+{
+    public MainWindow()
+    {
+        InitializeComponent();
+
+        // Using the name of type as key
+        ((App)Application.Current).WindowPlace.Register(this);
+    }
+}
+```
+
+If you want to use a key other than type name, or want to save individual settings for multiple instances, set string as key.
+
 in MainWindow.xaml.cs
 ```cs
 public partial class MainWindow : Window
