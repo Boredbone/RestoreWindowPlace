@@ -1,18 +1,35 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
-        <id>$id$</id>
-        <version>$version$</version>
-        <title>$title$</title>
-        <authors>$author$</authors>
-        <owners>$author$</owners>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <language>en-US</language>
-        <description>$description$</description>
-        <licenseUrl>https://github.com/Boredbone/RestoreWindowPlace/blob/master/LICENSE.txt</licenseUrl>
-        <projectUrl>https://github.com/Boredbone/RestoreWindowPlace</projectUrl>
-    </metadata>
-    <files>
-        <file src="bin\Release\RestoreWindowPlace.dll" target="lib\net45" />
-    </files>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>RestoreWindowPlace</id>
+    <version>2.0.0</version>
+    <title>RestoreWindowPlace</title>
+    <authors>Boredbone</authors>
+    <owners>Boredbone</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE.txt</license>
+    <projectUrl>https://github.com/Boredbone/RestoreWindowPlace</projectUrl>
+    <description>Save and restore the place of the WPF window</description>
+    <copyright>Copyright c 2016</copyright>
+    <language>en-US</language>
+    <tags>wpf</tags>
+    <dependencies>
+      <group targetFramework="netcoreapp3.0" />
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="netcoreapp3.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WPF" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="..\LICENSE.txt" target="\" />
+
+    <file src="bin\Release\netcoreapp3.0\RestoreWindowPlace.dll" target="lib\netcoreapp3.0" />
+    <file src="bin\Release\netcoreapp3.0\RestoreWindowPlace.xml" target="lib\netcoreapp3.0" />
+
+    <file src="..\RestoreWindowPlace.Net45\bin\Release\RestoreWindowPlace.Net45.dll" target="lib\net45" />
+    <file src="..\RestoreWindowPlace.Net45\bin\Release\RestoreWindowPlace.Net45.xml" target="lib\net45" />
+
+  </files>
 </package>

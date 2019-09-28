@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace RestoreWindowPlace
+namespace RestoreWindowPlace.WindowsApi
 {
     /// <summary>
     /// The Point structure defines the x- and y-coordinates of a point.

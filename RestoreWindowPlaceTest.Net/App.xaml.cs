@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using RestoreWindowPlace;
 
-namespace RestoreWindowPlaceTest
+namespace RestoreWindowPlaceTest.Net
 {
     /// <summary>
     /// Interaction logic for App.xaml

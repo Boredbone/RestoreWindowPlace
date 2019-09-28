@@ -9,9 +9,9 @@ namespace RestoreWindowPlace
     /// Save and load object to/from XML file
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal class XmlSettingManager<T> where T : class, new()
+    internal class XmlSettingManager<T>
     {
-        private string filePath;
+        private readonly string filePath;
 
         /// <summary>
         /// Set file name
@@ -39,36 +39,25 @@ namespace RestoreWindowPlace
                 Encoding = new System.Text.UTF8Encoding(false)
             };
 
-            //ライターを生成
             using (var xw = XmlWriter.Create(this.filePath, setting))
             {
-                //シリアライズして保存
                 var serializer = new DataContractSerializer(typeof(T));
                 serializer.WriteObject(xw, obj);
                 xw.Flush();
             }
         }
-        
+
         /// <summary>
         /// Load XML file
         /// </summary>
         /// <returns></returns>
         public T LoadXml()
         {
-            try
+            using (var xr = XmlReader.Create(this.filePath))
             {
-                using (var xr = XmlReader.Create(this.filePath))
-                {
-                    var serializer = new DataContractSerializer(typeof(T));
-                    var value = serializer.ReadObject(xr);
-
-                    return (T)value;
-                }
-            }
-            catch
-            {
-                //newして返す
-                return new T();
+                var serializer = new DataContractSerializer(typeof(T));
+                var value = serializer.ReadObject(xr);
+                return (T)value;
             }
         }
     }

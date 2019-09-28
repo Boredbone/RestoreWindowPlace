@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using RestoreWindowPlace.WindowsApi;
+using System;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace RestoreWindowPlace
 {
@@ -12,66 +10,19 @@ namespace RestoreWindowPlace
     /// </summary>
     internal static class WindowRelocate
     {
-
-        /// <summary>
-        /// Enumerate all windows
-        /// </summary>
-        /// <returns></returns>
-        public static List<WindowInformation> EnumerateWindows()
-        {
-
-            var windows = new List<WindowInformation>();
-
-            WindowPlacement.EnumWindows((handle, parameter) =>
-            {
-                var sb = new StringBuilder(0x1024);
-
-                if (WindowPlacement.IsWindowVisible(handle) != 0
-                    && WindowPlacement.GetWindowText(handle, sb, sb.Capacity) != 0)
-                {
-
-                    var window = new WindowInformation()
-                    {
-                        Title = sb.ToString(),
-                        Handle = handle,
-                        Id = (int)WindowPlacement.GetWindowThreadProcessId(handle, IntPtr.Zero),
-                    };
-
-                    var title = sb.ToString();
-
-                    if (windows.Count == 0
-                        || windows.Last().Id != window.Id
-                        || windows.Last().Title != window.Title)
-                    {
-                        windows.Add(window);
-                    }
-
-                }
-                return 1;
-            }, 0);
-
-            if (windows.Count > 0 && windows.Last().Title == "Program Manager")
-            {
-                windows.RemoveAt(windows.Count - 1);
-            }
-
-            return windows;
-        }
-
         /// <summary>
         /// Set position and size to window
         /// </summary>
-        /// <param name="window"></param>
+        /// <param name="windowHandle"></param>
         /// <param name="positon">Position and size. If width &lt; 0 maximized, if height &lt; 0 minimized.</param>
-        public static void Relocate(this WindowInformation window, Rectangle positon)
+        public static void Relocate(IntPtr windowHandle, Rectangle positon)
         {
-
             var placement = new WindowPlacement.WINDOWPLACEMENT();
 
             placement.Length = Marshal.SizeOf(typeof(WindowPlacement.WINDOWPLACEMENT));
 
             // Get current placement
-            WindowPlacement.GetWindowPlacement(window.Handle, ref placement);
+            WindowPlacement.GetWindowPlacement(windowHandle, ref placement);
 
             placement.ShowCmd = WindowPlacement.ShowWindowCommands.Restore;
             placement.Flags = 0;
@@ -111,81 +62,34 @@ namespace RestoreWindowPlace
             placement.NormalPosition.Bottom = placement.NormalPosition.Top + height;
             placement.NormalPosition.Right = placement.NormalPosition.Left + width;
 
-            WindowPlacement.SetWindowPlacement(window.Handle, ref placement);
+            WindowPlacement.SetWindowPlacement(windowHandle, ref placement);
 
             // Show at top
-            WindowPlacement.SetForegroundWindow(window.Handle);
+            WindowPlacement.SetForegroundWindow(windowHandle);
         }
 
         /// <summary>
         /// Set position to window
         /// </summary>
-        /// <param name="window"></param>
+        /// <param name="windowHandle"></param>
         /// <param name="left"></param>
         /// <param name="top"></param>
-        public static void Relocate(this WindowInformation window, int left, int top)
-        {
-            window.Relocate(new Rectangle(left, top, 0, 0));
-        }
+        public static void Relocate(IntPtr windowHandle, int left, int top)
+            => Relocate(windowHandle, new Rectangle(left, top, 0, 0));
 
-        /// <summary>
-        /// Set position and size to top window
-        /// </summary>
-        /// <param name="positon"></param>
-        public static void RelocateTop(Rectangle positon)
-        {
-            int thisProcessId = -1;
-
-
-            WindowInformation window = null;
-
-
-            WindowPlacement.EnumWindows((handle, parameter) =>
-            {
-                var sb = new StringBuilder(0x1024);
-                if (WindowPlacement.IsWindowVisible(handle) != 0
-                    && WindowPlacement.GetWindowText(handle, sb, sb.Capacity) != 0)
-                {
-                    var id = (int)WindowPlacement.GetWindowThreadProcessId(handle, IntPtr.Zero);
-
-                    if (thisProcessId < 0)
-                    {
-                        thisProcessId = id;
-                    }
-                    else if (id != thisProcessId)
-                    {
-                        window = new WindowInformation()
-                        {
-                            Title = sb.ToString(),
-                            Handle = handle,
-                            Id = id,
-                        };
-
-                        return 0;
-                    }
-                }
-                return 1;
-            }, 0);
-
-            if (window != null)
-            {
-                window.Relocate(positon);
-            }
-
-        }
 
         /// <summary>
         /// Get position and size of window
         /// </summary>
-        /// <param name="window"></param>
+        /// <param name="windowHandle"></param>
         /// <returns></returns>
-        public static Rectangle GetPlace(this WindowInformation window)
+        public static Rectangle GetPlace(IntPtr windowHandle)
         {
             var placement = new WindowPlacement.WINDOWPLACEMENT();
 
             placement.Length = Marshal.SizeOf(typeof(WindowPlacement.WINDOWPLACEMENT));
 
-            WindowPlacement.GetWindowPlacement(window.Handle, ref placement);
+            WindowPlacement.GetWindowPlacement(windowHandle, ref placement);
 
             var position = placement.NormalPosition;
 

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace RestoreWindowPlace
+namespace RestoreWindowPlace.WindowsApi
 {
     /// <summary>
     /// The Rect structure defines the coordinates of the upper-left and lower-right corners of a rectangle.

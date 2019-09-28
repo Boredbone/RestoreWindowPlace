@@ -10,9 +10,8 @@ namespace RestoreWindowPlace
     /// </summary>
     public class WindowPlace
     {
-        private XmlSettingManager<Dictionary<string, Rectangle>> ConfigXml { get; }
-        private Dictionary<string, Rectangle> WindowPlaces { get; set; }
-
+        private readonly XmlSettingManager<Dictionary<string, Rectangle>> configXml;
+        private Dictionary<string, Rectangle> windowPlaces;
 
         /// <summary>
         /// Save size and position of window to file
@@ -20,20 +19,39 @@ namespace RestoreWindowPlace
         /// <param name="filePath">Name or path of XML file to save</param>
         public WindowPlace(string filePath)
         {
-            this.WindowPlaces = new Dictionary<string, Rectangle>();
-            this.ConfigXml = new XmlSettingManager<Dictionary<string, Rectangle>>(filePath);
+            this.configXml = new XmlSettingManager<Dictionary<string, Rectangle>>(filePath);
             this.Load();
         }
 
         /// <summary>
         /// Save setting file
         /// </summary>
-        public void Save() => this.ConfigXml.SaveXml(this.WindowPlaces);
+        public void Save()
+        {
+            if (this.windowPlaces != null)
+            {
+                this.configXml.SaveXml(this.windowPlaces);
+            }
+        }
 
         /// <summary>
         /// Load setting file
         /// </summary>
-        public void Load() => this.WindowPlaces = this.ConfigXml.LoadXml();
+        public void Load()
+        {
+            this.windowPlaces = this.LoadInner();
+        }
+        private Dictionary<string, Rectangle> LoadInner()
+        {
+            try
+            {
+                return this.configXml.LoadXml();
+            }
+            catch
+            {
+            }
+            return new Dictionary<string, Rectangle>();
+        }
 
         /// <summary>
         /// Restore size and position
@@ -42,10 +60,9 @@ namespace RestoreWindowPlace
         /// <param name="key"></param>
         public void Restore(Window window, string key)
         {
-            Rectangle placement;
-            if (this.WindowPlaces.TryGetValue(key, out placement))
+            if (this.windowPlaces.TryGetValue(key, out var place))
             {
-                new WindowInformation(new WindowInteropHelper(window).Handle).Relocate(placement);
+                WindowRelocate.Relocate(new WindowInteropHelper(window).Handle, place);
             }
         }
 
@@ -56,10 +73,9 @@ namespace RestoreWindowPlace
         /// <param name="key"></param>
         public void RestorePosition(Window window, string key)
         {
-            Rectangle place;
-            if (this.WindowPlaces.TryGetValue(key, out place))
+            if (this.windowPlaces.TryGetValue(key, out var place))
             {
-                new WindowInformation(new WindowInteropHelper(window).Handle).Relocate(place.Left, place.Top);
+                WindowRelocate.Relocate(new WindowInteropHelper(window).Handle, place.Left, place.Top);
             }
         }
 
@@ -70,8 +86,7 @@ namespace RestoreWindowPlace
         /// <param name="key"></param>
         public void Store(Window window, string key)
         {
-            this.WindowPlaces[key] = new WindowInformation
-                (new WindowInteropHelper(window).Handle).GetPlace();
+            this.windowPlaces[key] = WindowRelocate.GetPlace(new WindowInteropHelper(window).Handle);
         }
 
 

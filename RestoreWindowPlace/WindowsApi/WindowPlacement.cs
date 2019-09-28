@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace RestoreWindowPlace
+namespace RestoreWindowPlace.WindowsApi
 {
     /// <summary>
     /// The WINDOWPLACEMENT structure contains information about the placement of a window on the screen.
@@ -207,8 +207,7 @@ namespace RestoreWindowPlace
         /// </returns>
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SetWindowPlacement(IntPtr hWnd,
-           [In] ref WINDOWPLACEMENT lpwndpl);
+        public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
 
         /// <summary>
         /// Retrieves the show state and the restored, minimized, and maximized positions of the specified window.
