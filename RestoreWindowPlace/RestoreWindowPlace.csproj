@@ -15,7 +15,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
-    <DocumentationFile>C:\MyFiles\Projects\Cs\RestoreWindowPlace\RestoreWindowPlace\RestoreWindowPlace.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netcoreapp3.0\RestoreWindowPlace.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
