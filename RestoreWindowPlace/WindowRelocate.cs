@@ -14,8 +14,10 @@ namespace RestoreWindowPlace
         /// Set position and size to window
         /// </summary>
         /// <param name="windowHandle"></param>
-        /// <param name="positon">Position and size. If width &lt; 0 maximized, if height &lt; 0 minimized.</param>
-        public static void Relocate(IntPtr windowHandle, Rectangle positon)
+        /// <param name="position">
+        /// Position and size. If width &lt; 0 maximized, if height &lt; 0 minimized. If height and width are 0 ignore size
+        /// </param>
+        public static void Relocate(IntPtr windowHandle, Rectangle position)
         {
             var placement = new WindowPlacement.WINDOWPLACEMENT();
 
@@ -24,10 +26,13 @@ namespace RestoreWindowPlace
             // Get current placement
             WindowPlacement.GetWindowPlacement(windowHandle, ref placement);
 
+            var normalWidth = placement.NormalPosition.Width;
+            var normalHeight = placement.NormalPosition.Height;
+
             placement.ShowCmd = WindowPlacement.ShowWindowCommands.Restore;
             placement.Flags = 0;
-            placement.NormalPosition.Top = positon.Top;
-            placement.NormalPosition.Left = positon.Left;
+            placement.NormalPosition.Top = position.Top;
+            placement.NormalPosition.Left = position.Left;
 
             ////Restore if minimized
             //if (placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized)
@@ -35,13 +40,14 @@ namespace RestoreWindowPlace
             //    placement.ShowCmd = WindowPlacement.ShowWindowCommands.Normal;
             //}
 
-            var width = positon.Width;
-            var height = positon.Height;
+            var width = position.Width;
+            var height = position.Height;
 
             if (width == 0 || height == 0)
             {
-                width = placement.NormalPosition.Right - placement.NormalPosition.Left;
-                height = placement.NormalPosition.Bottom - placement.NormalPosition.Top;
+                // ignoring size
+                width = normalWidth;
+                height = normalHeight;
             }
             else if (width < 0 && height < 0)
             {

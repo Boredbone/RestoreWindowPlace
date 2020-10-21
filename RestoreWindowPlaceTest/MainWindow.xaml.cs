@@ -24,9 +24,6 @@ namespace RestoreWindowPlaceTest
         {
             InitializeComponent();
 
-            // Save setting when this window close
-            this.Closed += (o, e) => ((App)Application.Current).WindowPlace.Save();
-
             // Resister the window using type name as key
             ((App)Application.Current).WindowPlace.Register(this);
 
