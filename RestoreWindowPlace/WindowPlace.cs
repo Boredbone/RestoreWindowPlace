@@ -153,7 +153,7 @@ namespace RestoreWindowPlace
         /// <param name="key"></param>
         public bool IsRegistered(string key)
         {
-            return this.windowPlaces.TryGetValue(key, out _);
+            return this.windowPlaces.ContainsKey(key);
         }
 
     }
