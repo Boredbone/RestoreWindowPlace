@@ -147,5 +147,14 @@ namespace RestoreWindowPlace
         {
             RegisterPositionOnly(window, typeof(T).Name);
         }
+        /// Checks if key is registered.
+        /// </summary>
+        /// <param name="window"></param>
+        /// <param name="key"></param>
+        public bool IsRegistered(string key)
+        {
+            return this.windowPlaces.TryGetValue(key, out _);
+        }
+
     }
 }
