@@ -97,16 +97,29 @@ namespace RestoreWindowPlace
 
             WindowPlacement.GetWindowPlacement(windowHandle, ref placement);
 
-            var position = placement.NormalPosition;
+            if (placement.ShowCmd != WindowPlacement.ShowWindowCommands.Maximize)
+            {
+                // Use GetWindowRect Api when Window is not maximized;
+                // This Api works correctly when the window is snapped
+                var rect = new Rect();
+                WindowPlacement.GetWindowRect(windowHandle, ref rect);
 
-            var minimized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized;
-            var maximized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.Maximize;
+                return rect;
 
-            return new Rectangle(
-                position.Left,
-                position.Top,
-                (maximized ? -1 : 1) * (position.Right - position.Left),
-                (position.Bottom - position.Top));
+            }
+            else
+            {
+                var position = placement.NormalPosition;
+
+                var minimized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized;
+                var maximized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.Maximize;
+
+                return new Rectangle(
+                    position.Left,
+                    position.Top,
+                    (maximized ? -1 : 1) * (position.Right - position.Left),
+                    (position.Bottom - position.Top));
+            }
         }
     }
 }
