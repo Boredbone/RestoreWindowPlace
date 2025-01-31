@@ -95,9 +95,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RestoreWindowPlace.Net45\RestoreWindowPlace.Net45.csproj">
-      <Project>{0e5d946a-db21-4419-b623-255d527316fe}</Project>
-      <Name>RestoreWindowPlace.Net45</Name>
+    <ProjectReference Include="..\RestoreWindowPlace\RestoreWindowPlace.csproj">
+      <Project>{83829e1e-793f-4d36-b322-cc7672a9fa25}</Project>
+      <Name>RestoreWindowPlace</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
