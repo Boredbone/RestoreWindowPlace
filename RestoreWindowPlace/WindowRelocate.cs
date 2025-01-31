@@ -1,5 +1,6 @@
 ﻿using RestoreWindowPlace.WindowsApi;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -83,30 +84,103 @@ namespace RestoreWindowPlace
         public static void Relocate(IntPtr windowHandle, int left, int top)
             => Relocate(windowHandle, new Rectangle(left, top, 0, 0));
 
+        private static Size GetTaskbarOffset(ref Rect rect)
+        {
+            var taskbarInfo = new WindowPlacement.APPBARDATA();
+            taskbarInfo.cbSize = Marshal.SizeOf(typeof(WindowPlacement.APPBARDATA));
+            taskbarInfo.hWnd = IntPtr.Zero;
+
+            WindowPlacement.SHAppBarMessage(
+                WindowPlacement.AppBarMessage.ABM_GETTASKBARPOS,
+                ref taskbarInfo);
+
+            var taskbarEdge = taskbarInfo.uEdge;
+            Debug.WriteLine($"taskbarEdge={taskbarEdge}");
+
+            if (taskbarEdge == WindowPlacement.AppBarEdge.ABE_TOP
+                || taskbarEdge == WindowPlacement.AppBarEdge.ABE_LEFT)
+            {
+                var taskbarWidth = taskbarInfo.rc.Width;
+                var taskbarHeight = taskbarInfo.rc.Height;
+
+                var monitorUnderWindow = WindowPlacement.MonitorFromRect(ref rect,
+                    WindowPlacement.MonitorFromRectFlags.MONITOR_DEFAULTTONEAREST);
+
+                //var mInfo = new WindowPlacement.MONITORINFO();
+                //mInfo.cbSize = Marshal.SizeOf(typeof(WindowPlacement.MONITORINFO));
+                //WindowPlacement.GetMonitorInfo(hMonitor1, ref mInfo);
+
+                var monitorUnderTaskbar = WindowPlacement.MonitorFromRect(ref taskbarInfo.rc,
+                    WindowPlacement.MonitorFromRectFlags.MONITOR_DEFAULTTONEAREST);
+
+                if (monitorUnderWindow == monitorUnderTaskbar)
+                {
+                    Debug.WriteLine("monitor has taskbar!!!");
+
+                    if (WindowPlacement.SHAppBarMessage(
+                        WindowPlacement.AppBarMessage.ABM_GETAUTOHIDEBAR,
+                        ref taskbarInfo) == IntPtr.Zero)
+                    {
+                        Debug.WriteLine("taskbar is static!!!");
+
+                        switch (taskbarEdge)
+                        {
+                            case WindowPlacement.AppBarEdge.ABE_TOP:
+                                return new Size(0, taskbarHeight);
+                            case WindowPlacement.AppBarEdge.ABE_LEFT:
+                                return new Size(taskbarWidth, 0);
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("taskbar is hidden...");
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("monitor does not have taskbar...");
+                }
+            }
+            return Size.Empty;
+        }
 
         /// <summary>
         /// Get position and size of window
         /// </summary>
         /// <param name="windowHandle"></param>
+        /// <param name="byRect"></param>
         /// <returns></returns>
-        public static Rectangle GetPlace(IntPtr windowHandle)
+        public static Rectangle GetPlace(IntPtr windowHandle, bool byRect)
         {
             var placement = new WindowPlacement.WINDOWPLACEMENT();
-
             placement.Length = Marshal.SizeOf(typeof(WindowPlacement.WINDOWPLACEMENT));
 
             WindowPlacement.GetWindowPlacement(windowHandle, ref placement);
 
-            var position = placement.NormalPosition;
-
             var minimized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized;
             var maximized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.Maximize;
 
-            return new Rectangle(
-                position.Left,
-                position.Top,
-                (maximized ? -1 : 1) * (position.Right - position.Left),
-                (position.Bottom - position.Top));
+            if (byRect && !maximized && !minimized)
+            {
+                var rect = new Rect();
+                WindowPlacement.GetWindowRect(windowHandle, ref rect);
+
+                var taskbarOffset = GetTaskbarOffset(ref rect);
+
+                return new Rectangle(
+                    rect.Left - taskbarOffset.Width,
+                    rect.Top - taskbarOffset.Height,
+                    rect.Width,
+                    rect.Height);
+            }
+            else
+            {
+                return new Rectangle(
+                    placement.NormalPosition.Left,
+                    placement.NormalPosition.Top,
+                    (maximized ? -1 : 1) * placement.NormalPosition.Width,
+                    placement.NormalPosition.Height);
+            }
         }
     }
 }

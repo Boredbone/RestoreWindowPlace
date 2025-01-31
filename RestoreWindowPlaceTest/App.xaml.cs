@@ -20,6 +20,7 @@ namespace RestoreWindowPlaceTest
         {
             // Set a name of config file
             this.WindowPlace = new WindowPlace(@"placement.config");
+            this.WindowPlace.IsSavingSnappedPositionEnabled = true;
         }
 
         protected override void OnExit(ExitEventArgs e)

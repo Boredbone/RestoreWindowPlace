@@ -10,6 +10,12 @@ namespace RestoreWindowPlace
     /// </summary>
     public class WindowPlace
     {
+        /// <summary>
+        /// true: If the window is snapped, save its position as its actual position.
+        /// false: Save the original position whether the window is snapped.
+        /// </summary>
+        public bool IsSavingSnappedPositionEnabled { get; set; } = false;
+
         private readonly XmlSettingManager<Dictionary<string, Rectangle>> configXml;
         private Dictionary<string, Rectangle> windowPlaces;
 
@@ -86,7 +92,8 @@ namespace RestoreWindowPlace
         /// <param name="key"></param>
         public void Store(Window window, string key)
         {
-            this.windowPlaces[key] = WindowRelocate.GetPlace(new WindowInteropHelper(window).Handle);
+            this.windowPlaces[key] = WindowRelocate.GetPlace(new WindowInteropHelper(window).Handle,
+                this.IsSavingSnappedPositionEnabled);
         }
 
 
@@ -147,9 +154,9 @@ namespace RestoreWindowPlace
         {
             RegisterPositionOnly(window, typeof(T).Name);
         }
+        /// <summary>
         /// Checks if key is registered.
         /// </summary>
-        /// <param name="window"></param>
         /// <param name="key"></param>
         public bool IsRegistered(string key)
         {
