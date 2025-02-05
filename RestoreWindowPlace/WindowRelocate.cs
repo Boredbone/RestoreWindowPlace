@@ -1,6 +1,5 @@
 ﻿using RestoreWindowPlace.WindowsApi;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -11,6 +10,8 @@ namespace RestoreWindowPlace
     /// </summary>
     internal static class WindowRelocate
     {
+        const double defaultDpi = 96.0;
+
         /// <summary>
         /// Set position and size to window
         /// </summary>
@@ -84,64 +85,19 @@ namespace RestoreWindowPlace
         public static void Relocate(IntPtr windowHandle, int left, int top)
             => Relocate(windowHandle, new Rectangle(left, top, 0, 0));
 
-        private static Size GetTaskbarOffset(ref Rect rect)
+        private static Size GetTaskbarOffset(Rect rect)
         {
-            var taskbarInfo = new WindowPlacement.APPBARDATA();
-            taskbarInfo.cbSize = Marshal.SizeOf(typeof(WindowPlacement.APPBARDATA));
-            taskbarInfo.hWnd = IntPtr.Zero;
+            var monitorUnderWindow = WindowPlacement.MonitorFromRect(ref rect,
+                WindowPlacement.MonitorFromRectFlags.MONITOR_DEFAULTTONEAREST);
 
-            WindowPlacement.SHAppBarMessage(
-                WindowPlacement.AppBarMessage.ABM_GETTASKBARPOS,
-                ref taskbarInfo);
+            var mInfo = new WindowPlacement.MONITORINFO();
+            mInfo.cbSize = Marshal.SizeOf(typeof(WindowPlacement.MONITORINFO));
+            WindowPlacement.GetMonitorInfo(monitorUnderWindow, ref mInfo);
 
-            var taskbarEdge = taskbarInfo.uEdge;
-            Debug.WriteLine($"taskbarEdge={taskbarEdge}");
+            var offsetX = Math.Max(mInfo.rcWork.Left - mInfo.rcMonitor.Left, 0);
+            var offsetY = Math.Max(mInfo.rcWork.Top - mInfo.rcMonitor.Top, 0);
 
-            if (taskbarEdge == WindowPlacement.AppBarEdge.ABE_TOP
-                || taskbarEdge == WindowPlacement.AppBarEdge.ABE_LEFT)
-            {
-                var taskbarWidth = taskbarInfo.rc.Width;
-                var taskbarHeight = taskbarInfo.rc.Height;
-
-                var monitorUnderWindow = WindowPlacement.MonitorFromRect(ref rect,
-                    WindowPlacement.MonitorFromRectFlags.MONITOR_DEFAULTTONEAREST);
-
-                //var mInfo = new WindowPlacement.MONITORINFO();
-                //mInfo.cbSize = Marshal.SizeOf(typeof(WindowPlacement.MONITORINFO));
-                //WindowPlacement.GetMonitorInfo(hMonitor1, ref mInfo);
-
-                var monitorUnderTaskbar = WindowPlacement.MonitorFromRect(ref taskbarInfo.rc,
-                    WindowPlacement.MonitorFromRectFlags.MONITOR_DEFAULTTONEAREST);
-
-                if (monitorUnderWindow == monitorUnderTaskbar)
-                {
-                    Debug.WriteLine("monitor has taskbar!!!");
-
-                    if (WindowPlacement.SHAppBarMessage(
-                        WindowPlacement.AppBarMessage.ABM_GETAUTOHIDEBAR,
-                        ref taskbarInfo) == IntPtr.Zero)
-                    {
-                        Debug.WriteLine("taskbar is static!!!");
-
-                        switch (taskbarEdge)
-                        {
-                            case WindowPlacement.AppBarEdge.ABE_TOP:
-                                return new Size(0, taskbarHeight);
-                            case WindowPlacement.AppBarEdge.ABE_LEFT:
-                                return new Size(taskbarWidth, 0);
-                        }
-                    }
-                    else
-                    {
-                        Debug.WriteLine("taskbar is hidden...");
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine("monitor does not have taskbar...");
-                }
-            }
-            return Size.Empty;
+            return new Size(offsetX, offsetY);
         }
 
         /// <summary>
@@ -160,26 +116,39 @@ namespace RestoreWindowPlace
             var minimized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized;
             var maximized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.Maximize;
 
+            double dpi = defaultDpi;
+            try
+            {
+                var tmpDpi = WindowPlacement.GetDpiForWindow(windowHandle);
+                if (tmpDpi > 0)
+                {
+                    dpi = tmpDpi;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (byRect && !maximized && !minimized)
             {
                 var rect = new Rect();
                 WindowPlacement.GetWindowRect(windowHandle, ref rect);
 
-                var taskbarOffset = GetTaskbarOffset(ref rect);
+                var taskbarOffset = GetTaskbarOffset(rect);
 
                 return new Rectangle(
                     rect.Left - taskbarOffset.Width,
                     rect.Top - taskbarOffset.Height,
-                    rect.Width,
-                    rect.Height);
+                    (int)Math.Round(rect.Width * defaultDpi / dpi),
+                    (int)Math.Round(rect.Height * defaultDpi / dpi));
             }
             else
             {
                 return new Rectangle(
                     placement.NormalPosition.Left,
                     placement.NormalPosition.Top,
-                    (maximized ? -1 : 1) * placement.NormalPosition.Width,
-                    placement.NormalPosition.Height);
+                    (maximized ? -1 : 1) * (int)Math.Round(placement.NormalPosition.Width * defaultDpi / dpi),
+                    (int)Math.Round(placement.NormalPosition.Height * defaultDpi / dpi));
             }
         }
     }

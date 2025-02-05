@@ -157,39 +157,6 @@ namespace RestoreWindowPlace.WindowsApi
         const UInt32 SW_SHOWNA = 8;
         const UInt32 SW_RESTORE = 9;*/
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct APPBARDATA
-        {
-            public int cbSize; // initialize this field using: Marshal.SizeOf(typeof(APPBARDATA));
-            public IntPtr hWnd;
-            public uint uCallbackMessage;
-            public AppBarEdge uEdge;
-            public Rect rc;
-            public int lParam;
-        }
-
-        public enum AppBarMessage : uint
-        {
-            ABM_NEW = 0,
-            ABM_REMOVE = 1,
-            ABM_QUERYPOS = 2,
-            ABM_SETPOS = 3,
-            ABM_GETSTATE = 4,
-            ABM_GETTASKBARPOS = 5,
-            ABM_ACTIVATE = 6,
-            ABM_GETAUTOHIDEBAR = 7,
-            ABM_SETAUTOHIDEBAR = 8,
-            ABM_WINDOWPOSCHANGED = 9,
-            ABM_SETSTATE = 10,
-        }
-        public enum AppBarEdge : uint
-        {
-            ABE_LEFT = 0,
-            ABE_TOP = 1,
-            ABE_RIGHT = 2,
-            ABE_BOTTOM = 3,
-        }
-
         public enum MonitorFromRectFlags : uint
         {
             MONITOR_DEFAULTTONULL = 0,
@@ -197,15 +164,14 @@ namespace RestoreWindowPlace.WindowsApi
             MONITOR_DEFAULTTONEAREST = 2,
         }
 
-        //[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        //internal struct MONITORINFO
-        //{
-        //    public int cbSize;
-        //    public Rect rcMonitor;
-        //    public Rect rcWork;
-        //    public uint dwFlags;
-        //}
-
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        internal struct MONITORINFO
+        {
+            public int cbSize;
+            public Rect rcMonitor;
+            public Rect rcWork;
+            public uint dwFlags;
+        }
 
         public delegate int EnumWindowsDelegate(IntPtr hWnd, int lParam);
 
@@ -281,18 +247,19 @@ namespace RestoreWindowPlace.WindowsApi
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 
-        //[DllImport("user32.dll")]
-        //[return: MarshalAs(UnmanagedType.Bool)]
-        //public static extern bool GetMonitorInfo(IntPtr hMonitor, [In, Out] ref MONITORINFO lpmi);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
 
         [DllImport("user32.dll")]
         public static extern IntPtr MonitorFromRect([In] ref Rect lprc, MonitorFromRectFlags dwFlags);
 
-        [DllImport("shell32.dll")]
-        public static extern IntPtr SHAppBarMessage(AppBarMessage dwMessage, [In] ref APPBARDATA pData);
-
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, ref Rect lpRect);
+
+
+        [DllImport("user32.dll")]
+        public static extern uint GetDpiForWindow(IntPtr hWnd);
     }
 }

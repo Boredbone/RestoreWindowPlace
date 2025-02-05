@@ -26,37 +26,37 @@ namespace RestoreWindowPlace.WindowsApi
 
         public int X
         {
-            get { return Left; }
+            readonly get { return Left; }
             set { Right -= (Left - value); Left = value; }
         }
 
         public int Y
         {
-            get { return Top; }
+            readonly get { return Top; }
             set { Bottom -= (Top - value); Top = value; }
         }
 
         public int Height
         {
-            get { return Bottom - Top; }
+            readonly get { return Bottom - Top; }
             set { Bottom = value + Top; }
         }
 
         public int Width
         {
-            get { return Right - Left; }
+            readonly get { return Right - Left; }
             set { Right = value + Left; }
         }
 
         public System.Drawing.Point Location
         {
-            get { return new System.Drawing.Point(Left, Top); }
+            readonly get { return new System.Drawing.Point(Left, Top); }
             set { X = value.X; Y = value.Y; }
         }
 
         public System.Drawing.Size Size
         {
-            get { return new System.Drawing.Size(Width, Height); }
+            readonly get { return new System.Drawing.Size(Width, Height); }
             set { Width = value.Width; Height = value.Height; }
         }
 
@@ -80,29 +80,29 @@ namespace RestoreWindowPlace.WindowsApi
             return !r1.Equals(r2);
         }
 
-        public bool Equals(Rect r)
+        public readonly bool Equals(Rect r)
         {
             return r.Left == Left && r.Top == Top && r.Right == Right && r.Bottom == Bottom;
         }
 
-        public override bool Equals(object obj)
+        public override readonly bool Equals(object obj)
         {
-            if (obj is Rect)
-                return Equals((Rect)obj);
-            else if (obj is System.Drawing.Rectangle)
-                return Equals(new Rect((System.Drawing.Rectangle)obj));
+            if (obj is Rect rect)
+                return Equals(rect);
+            else if (obj is System.Drawing.Rectangle rectangle)
+                return Equals(new Rect(rectangle));
             return false;
         }
 
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return ((System.Drawing.Rectangle)this).GetHashCode();
         }
 
-        public override string ToString()
+        public override readonly string ToString()
         {
             return string.Format(System.Globalization.CultureInfo.CurrentCulture,
-                $"{{Left={Left},Top={Top},Right={Right},Bottom={Bottom}}}");
+                $"[Left={Left},Top={Top},Right={Right},Bottom={Bottom}]");
         }
     }
 }
