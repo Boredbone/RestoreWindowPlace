@@ -18,8 +18,11 @@ namespace RestoreWindowPlaceTest
 
         public App()
         {
-            // Set a name of config file
+            // Set the name or path of the config file
             this.WindowPlace = new WindowPlace(@"placement.config");
+
+            // Select the behavior when window is snapped
+            //  (true: Save snapped position, false(default): Save original position before snapped)
             this.WindowPlace.IsSavingSnappedPositionEnabled = true;
         }
 
