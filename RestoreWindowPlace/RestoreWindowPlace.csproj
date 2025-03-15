@@ -4,7 +4,7 @@
     <TargetFrameworks>netcoreapp3.0;net6.0-windows;net8.0-windows;net45;</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <PackageProjectUrl>https://github.com/Boredbone/RestoreWindowPlace</PackageProjectUrl>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <Description>Save and restore the place of the WPF window</Description>
     <Copyright>Copyright c 2025</Copyright>
     <Company>Boredbone</Company>

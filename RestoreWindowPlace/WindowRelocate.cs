@@ -10,8 +10,6 @@ namespace RestoreWindowPlace
     /// </summary>
     internal static class WindowRelocate
     {
-        const double defaultDpi = 96.0;
-
         /// <summary>
         /// Set position and size to window
         /// </summary>
@@ -116,18 +114,10 @@ namespace RestoreWindowPlace
             var minimized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.ShowMinimized;
             var maximized = placement.ShowCmd == WindowPlacement.ShowWindowCommands.Maximize;
 
-            double dpi = defaultDpi;
-            try
-            {
-                var tmpDpi = WindowPlacement.GetDpiForWindow(windowHandle);
-                if (tmpDpi > 0)
-                {
-                    dpi = tmpDpi;
-                }
-            }
-            catch (Exception)
-            {
-            }
+            //TODO Window size is incorrect
+            // when Per-Monitor DPI is enabled in the application manifest (dpiAware or dpiAwareness),
+            // and the window is on a sub-monitor.
+
 
             if (byRect && !maximized && !minimized)
             {
@@ -139,16 +129,16 @@ namespace RestoreWindowPlace
                 return new Rectangle(
                     rect.Left - taskbarOffset.Width,
                     rect.Top - taskbarOffset.Height,
-                    (int)Math.Round(rect.Width * defaultDpi / dpi),
-                    (int)Math.Round(rect.Height * defaultDpi / dpi));
+                    rect.Width,
+                    rect.Height);
             }
             else
             {
                 return new Rectangle(
                     placement.NormalPosition.Left,
                     placement.NormalPosition.Top,
-                    (maximized ? -1 : 1) * (int)Math.Round(placement.NormalPosition.Width * defaultDpi / dpi),
-                    (int)Math.Round(placement.NormalPosition.Height * defaultDpi / dpi));
+                    (maximized ? -1 : 1) * placement.NormalPosition.Width,
+                    placement.NormalPosition.Height);
             }
         }
     }
